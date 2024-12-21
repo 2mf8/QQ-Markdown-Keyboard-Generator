@@ -6,8 +6,143 @@ import (
 	"strings"
 )
 
+type TempMarkDown struct {
+	ParamAddFirst int      `json:"-"`
+	TemplateId    string   `json:"custom_template_id,omitempty"`
+	Params        []*Param `json:"params,omitempty"`
+}
+
+type Param struct {
+	Key    string   `json:"key,omitempty"`
+	Values []string `json:"values,omitempty"`
+}
+
+type Template struct {
+	Str string
+}
+
 type MarkDown struct {
 	Str string
+}
+
+func TempGenerator() *Template {
+	return &Template{
+		Str: "",
+	}
+}
+
+func (r *Template) Url(name, webUrl string) *Template {
+	str := fmt.Sprintf("\n[🔗{{.%s}}]({{.%s}})", name, webUrl)
+	r.Str += str
+	return r
+}
+
+func (r *Template) H1(content string) *Template {
+	str := fmt.Sprintf("\n# {{.%s}}", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) H2(content string) *Template {
+	str := fmt.Sprintf("\n## {{.%s}}", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) H3(content string) *Template {
+	str := fmt.Sprintf("\n### {{.%s}}", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) DeleteLine(content string) *Template {
+	str := fmt.Sprintf("~~{{.%s}}~~", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) Bold(content string) *Template {
+	str := fmt.Sprintf("**{{.%s}}** ", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) Italic(content string) *Template {
+	str := fmt.Sprintf("*{{.%s}}* ", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) ItalicBold(content string) *Template {
+	str := fmt.Sprintf("***{{.%s}}*** ", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) BlockReference(content string) *Template {
+	str := fmt.Sprintf("\n> {{.%s}}\n", content)
+	r.Str += str
+	return r
+}
+
+func (r *Template) Image(text, url string, width, height int) *Template {
+	str := fmt.Sprintf("\n![{{.%s}} #%vpx #%vpx]({{.%s}})", text, width, height, url)
+	r.Str += str
+	return r
+}
+
+func (r *Template) DividerLine() *Template {
+	str := "\n ---\n"
+	r.Str += str
+	r.Str = strings.TrimSpace(r.Str)
+	return r
+}
+
+func (r *Template) Text(content string) *Template {
+	r.Str += content
+	return r
+}
+
+func (r *Template) NewLine() *Template {
+	r.Str += "\n"
+	return r
+}
+
+func (r *Template) Code(content string) *Template {
+	c := strings.ReplaceAll(strings.ReplaceAll(content, "\t", "\\t"), "\n", "\n")
+	str := fmt.Sprintf("\n```\n{{.%s}}\n```\n", c)
+	r.Str += str
+	return r
+}
+
+func TempBuilder(templateId string) *TempMarkDown {
+	return &TempMarkDown{
+		ParamAddFirst: 0,
+		TemplateId:    templateId,
+		Params: []*Param{
+			{
+				Key:    "",
+				Values: []string{},
+			},
+		},
+	}
+}
+
+func (t *TempMarkDown) TempParamAdd(key string, value string) *TempMarkDown {
+	if t.ParamAddFirst == 0 {
+		t.Params[0].Key = key
+		t.Params[0].Values = []string{value}
+		t.ParamAddFirst++
+	} else {
+		p := &Param{
+			Key: key,
+			Values: []string{
+				value,
+			},
+		}
+		t.Params = append(t.Params, p)
+	}
+	return t
 }
 
 func Builder() *MarkDown {
