@@ -4,7 +4,7 @@ import "fmt"
 
 var AutoId int = 0
 
-var Buttons =  make([]*Button, 0)
+var Buttons = make([]*Button, 0)
 
 // ActionType 按钮操作类型
 type ActionType uint32
@@ -37,7 +37,8 @@ type MessageKeyboard struct {
 
 // CustomKeyboard 自定义 Keyboard
 type CustomKeyboard struct {
-	Rows []*Row `json:"rows,omitempty"` // 行数组
+	BotAppId uint64 `json:"bot_appid,omitempty"`
+	Rows     []*Row `json:"rows,omitempty"` // 行数组
 }
 
 // Row 每行结构
@@ -80,9 +81,10 @@ type Permission struct {
 	SpecifyUserIDs []string `json:"specify_user_ids,omitempty"`
 }
 
-func Builder() *CustomKeyboard {
+func Builder(appid uint64) *CustomKeyboard {
 	return &CustomKeyboard{
-		Rows: make([]*Row, 0),
+		BotAppId: appid,
+		Rows:     make([]*Row, 0),
 	}
 }
 

@@ -10,14 +10,11 @@ import (
 
 func main() {
 	// 按钮模板生成
-	kb := gkb.Builder()
-	for i := 1; i < 25; i++ {
-		is := fmt.Sprintf("%v", i)
+	kb := gkb.Builder(101981675)
+	for i := 1; i < 26; i++ {
+		is := fmt.Sprintf("%v", i-1)
 		kb.Button(is, is, is, i, int(gkb.ActionTypeCallback), int(gkb.PermissionTypAll), false, true, false)
 		if i%5 == 0 {
-			kb.SetRow()
-		}
-		if i == 24 {
 			kb.SetRow()
 		}
 	}
